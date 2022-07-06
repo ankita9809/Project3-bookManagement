@@ -1,4 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const userModel = require('../models/userModel');
+
 
 
 const isValid = function(value) {
@@ -11,4 +13,10 @@ const isValidRequestBody = function(requestBody) {
     return Object.keys(requestBody).length > 0;
 };
 
-module.exports = { isValid, isValidRequestBody } 
+const isValidPassword = function(password){
+    if(password.length < 8 || password.length > 15){
+        return false
+    } return true
+}
+
+module.exports = { isValid, isValidRequestBody, isValidPassword} 

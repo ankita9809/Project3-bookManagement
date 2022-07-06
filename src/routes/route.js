@@ -6,7 +6,8 @@ const reviewController = require("../controllers/reviewController");
 const mid = require("../middleware/auth")
 
 
-
+// ---------------------------- CREATE USER ------------------------------------------
+router.post("/register", userController.createUser)
 
 
 
