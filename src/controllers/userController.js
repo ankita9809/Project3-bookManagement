@@ -3,6 +3,23 @@ const jwt = require('jsonwebtoken')
 const validator = require('../validator/validator')
 const secretKey = 'CACA'
 
+
+// ----------------------- CREATE USER -------------------
+
+const createUser= async function(req, res){
+    try{
+        const userData = req.body
+
+        let savedData = await userModel.create(userData)
+        return res.status(201).send({status: true, message: "Success", data: savedData })
+
+    } catch(error){
+        res.status(500).send({status: false, message: error.message})
+    }
+    
+
+}
+
 const loginUser = async function (req, res) {
     try {
         const requestBody = req.body;
@@ -29,3 +46,8 @@ const loginUser = async function (req, res) {
         return res.status(500).send({ status: false, message: "Something went wrong", Error: err.message })
     }
 }
+
+
+
+module.exports = {createUser, loginUser}
+
