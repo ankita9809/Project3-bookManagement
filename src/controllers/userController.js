@@ -57,16 +57,16 @@ const createUser = async function (req, res) {
         if (!validator.isValidPassword(password)) {
             return res.status(400).send({ status: false, message: "Password should be between 8 and 15 characters." })
         };
-        if (typeof address != "object") {
+        if (address && typeof address != "object") {
             return res.status(400).send({ status: false, message: "Address is in wrong format" })
         };
-        if (address.street && !validator.isValid(address.street)) {
+        if (address && address.street && !validator.isValid(address.street)) {
             return res.status(400).send({ status: false, message: "Street is required" })
         };
-        if (address.city && !validator.isValid(address.city)) {
+        if (address && address.city && !validator.isValid(address.city)) {
             return res.status(400).send({ status: false, message: "City is required" })
         };
-        if (address.pincode && !validator.isValid(address.pincode)) {
+        if (address && address.pincode && !validator.isValid(address.pincode)) {
             return res.status(400).send({ status: false, message: "Pincode is required" })
         };
 
@@ -100,7 +100,7 @@ const loginUser = async function (req, res) {
             return res.status(401).send({ status: false, message: `Invalid login credentials. Email id or password is incorrect.` });
         }
         const id = findCredentials._id
-        const token = await jwt.sign({ userId: id }, secretKey, { expiresIn: "20s" })
+        const token = await jwt.sign({ userId: id }, secretKey, { expiresIn: "24h" })
         return res.status(200).send({ status: true, message: `User logged in successfully.`, data: token });
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })

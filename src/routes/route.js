@@ -10,6 +10,8 @@ const mid = require("../middleware/auth")
 router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
 
+router.put("/books/:bookId", mid.auth, booksController.updateBook)
+
 const check = function(req,res){
     console.log("end")
     res.send("login ")
