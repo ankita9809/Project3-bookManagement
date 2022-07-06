@@ -95,7 +95,13 @@ const loginUser = async function (req, res) {
         if (!validator.isValid(password)) {
             return res.status(400).send({ status: false, message: "password is required" })
         };
-
+        const findCredentials = await userModel.findOne({ email, password })
+        if (!findCredentials) {
+            return res.status(401).send({ status: false, message: `Invalid login credentials. Email id or password is incorrect.` });
+        }
+        const id = findCredentials._id
+        const token = await jwt.sign({ userId: id }, secretKey, { expiresIn: "24h" })
+        return res.status(200).send({ status: true, message: `User logged in successfully.`, data: token });
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
