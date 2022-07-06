@@ -7,6 +7,13 @@ const auth = function(req, res){
 
         jwt.verify(token, "CACA", (err, decodedToken) => {
             if(err) return res.status(401).send({status : false, message : "Incorrect token"})
+
+            if (Date.now() > (decodedToken.exp) * 1000) { 
+
+                return res.status(401).send({ status: false, message: "Session expired! Please login again." })
+            
+            }
+
             req.token = decodedToken
             next()
         })
