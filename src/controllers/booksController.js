@@ -1,6 +1,63 @@
 const booksModel = require("../models/booksModel")
 const validator = require('../validator/validator')
 
+
+
+
+
+const bookCreation = async function (req, res) {
+    try {
+        let requestBody = req.body;
+        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = requestBody
+
+        if (!validator.isValidRequestBody(requestBody)) { 
+            return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide book details' })
+        }
+        if (!validator.isValid(title)) {
+            return res.status(400).send({ status: false, message: "Title must be present" })
+        };
+        let checkBook = await booksModel.find({title})
+        if(checkBook){
+            return res.status(400).send({ status: false, message: "Title already used" })
+        }
+        if (!validator.isValid(excerpt)) {
+            return res.status(400).send({ status: false, message: "excerpt must be present" })
+        };
+       
+        if (!validator.isValid(userId)) {
+            return res.status(400).send({ status: false, message: "userId must be present" })
+        };
+        if (!userId.match(/^[0-9a-fA-F]{24}$/)){
+            return res.status(400).send({status: false,msg: "Incorrect userId format"})
+        } 
+        //Authentication
+        if (userId != req.userId) {
+            return res.status(403).send({
+                status: false,
+                message: "Unauthorized access ! User's credentials do not match."
+            })
+        }
+        if (!validator.isValid(ISBN)) {
+            return res.status(400).send({ status: false, message: "ISBN must be present" })
+        };
+        let checkBook2 = await booksModel.find({ISBN})
+        if(checkBook2){
+            return res.status(400).send({ status: false, message: "ISBN already used" })
+        }
+        if (!validator.isValid(category)) {
+            return res.status(400).send({ status: false, message: "category must be present" })
+        };
+        if (!validator.isValid(subcategory)) {
+            return res.status(400).send({ status: false, message: "subcategory must be present" })
+        };
+    } catch (error) {
+        res.status(500).send({ status: false, message: error.message })
+    }
+}
+
+
+//  ==============updateBook=========================
+
 const updateBook = async function(req, res) {
     try {
         let bookId = req.params.bookId
@@ -49,4 +106,5 @@ const updateBook = async function(req, res) {
     }
 }
 
-module.exports = {updateBook}
+
+module.exports = {updateBook,bookCreation}
