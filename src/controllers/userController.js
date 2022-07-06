@@ -100,7 +100,7 @@ const loginUser = async function (req, res) {
             return res.status(401).send({ status: false, message: `Invalid login credentials. Email id or password is incorrect.` });
         }
         const id = findCredentials._id
-        const token = await jwt.sign({ userId: id }, secretKey, { expiresIn: "24h" })
+        const token = await jwt.sign({ userId: id }, secretKey, { expiresIn: "20s" })
         return res.status(200).send({ status: true, message: `User logged in successfully.`, data: token });
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })

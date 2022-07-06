@@ -10,10 +10,11 @@ const mid = require("../middleware/auth")
 router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
 
-
-
-
-
+const check = function(req,res){
+    console.log("end")
+    res.send("login ")
+}
+router.get("/test", mid.auth, check)
 
 
 
