@@ -19,5 +19,8 @@ const check = function(req,res){
 router.get("/test", mid.auth, check)
 
 
+// ------------------------- DELETE BOOKS --------------------------------------------
+
+router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
 
 module.exports = router;

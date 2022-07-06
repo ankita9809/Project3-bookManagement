@@ -1,9 +1,7 @@
 const booksModel = require("../models/booksModel")
 const validator = require('../validator/validator')
 
-
-
-
+// ------------------------------- CREATE BOOKS ----------------------------------------------------------
 
 const bookCreation = async function (req, res) {
     try {
@@ -55,8 +53,20 @@ const bookCreation = async function (req, res) {
     }
 }
 
+// ---------------------------- GET /books/:bookId -----------------
 
-//  ==============updateBook=========================
+const getBooksById = async function(req,res){
+    try{
+        const booksId = req.params.booksId;
+
+
+    }catch(err){
+        return res.status(500).send({status: false, message: err.message})
+    }
+}
+
+
+//  ------------------------------------ PUT /books/:boksId --------------------
 
 const updateBook = async function(req, res) {
     try {
@@ -107,4 +117,28 @@ const updateBook = async function(req, res) {
 }
 
 
-module.exports = {updateBook,bookCreation}
+// ------------------------- DELETE /books/:booksId -------------------
+
+const deleteBooksById = async function(req, res){
+    try{
+        const booksId = req.params.booksId
+
+        let book = await booksModel.findById(booksId)
+        if(!book || book.isDeleted == true){
+            return res.status(404).send({ status: false, message: "No such book exist"})
+        };
+        if(req.token.userId !== book.userId){
+            return res.status(403).send({ status: false, message: "Not Authorised" })
+        }
+
+        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: moment().format("YYYY-MM-DD Th:mm:ss")})
+        res.status(200).send({status: true, message: "Book deleted successfully"})
+
+
+    }catch(err){
+        return res.status(500).send({ status: false, message: err.message})
+    }
+
+}
+
+module.exports = { bookCreation, getBooksById, updateBook, deleteBooksById }

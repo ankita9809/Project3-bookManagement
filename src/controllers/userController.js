@@ -79,7 +79,7 @@ const createUser = async function (req, res) {
     }
 }
 
-// ----------------------- CREATE USER -------------------
+// ----------------------- USER LOGIN -------------------
 
 const loginUser = async function (req, res) {
     try {
