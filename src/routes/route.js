@@ -6,7 +6,7 @@ const reviewController = require("../controllers/reviewController");
 const mid = require("../middleware/auth")
 
 
-
+router.post("/login",userController.loginUser)
 
 
 
