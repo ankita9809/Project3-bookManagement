@@ -11,4 +11,4 @@ const isValidRequestBody = function(requestBody) {
     return Object.keys(requestBody).length > 0;
 };
 
-module.exports = { isValid, isValidRequestBody }
+module.exports = { isValid, isValidRequestBody } 
