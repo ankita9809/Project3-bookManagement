@@ -1,5 +1,6 @@
 const reviewModel = require("../models/reviewModel")
 const booksModel = require("../models/booksModel")
+const reviewModel = require("../models/reviewModel")
 const validator = require('../validator/validator')
 
 
@@ -84,6 +85,10 @@ const getAllBook = async function (req, res) {
     try {
 
         const queryParams = req.query
+        if (queryParams.userId && !queryParams.userId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).send({ status: false, msg: "Incorrect userId" })
+        }
+
 
         const books = await booksModel.find({ ...queryParams, isDeleted: false }).sort({ title: 1 }).select('_id title excerpt userId category releasedAt reviews')
 
@@ -95,7 +100,7 @@ const getAllBook = async function (req, res) {
 
     }
     catch (error) {
-        return res.status(500).send({ status: false, message: err.message })
+        return res.status(500).send({ status: false, message: error.message })
 
     }
 }
@@ -109,15 +114,15 @@ const getBooksById = async function (req, res) {
             return res.status(400).send({ status: false, message: "Incorrect Book Id format" })
         }
 
-        const allData = await booksModel.findOne({_id: bookId, isDeleted: false})
-        if(!allData){
-           return res.status(404).send({status: false, message: "Book doesn't exists...!"})
+        const allData = await booksModel.findOne({ _id: bookId, isDeleted: false })
+        if (!allData) {
+            return res.status(404).send({ status: false, message: "Book doesn't exists...!" })
         }
         if (req.token.userId != allData.userId) {
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
-        const reviews = await reviewModel.find({bookId: allData._id, isDeleted: false}).select({
-            _id: 1, 
+        const reviews = await reviewModel.find({ bookId: allData._id, isDeleted: false }).select({
+            _id: 1,
             bookId: 1,
             reviewedBy: 1,
             reviewedAt: 1,
@@ -128,8 +133,8 @@ const getBooksById = async function (req, res) {
         const data = allData.toObject()  //to change mongoose document into objects (#function .toObject() in mongoose)
         data["reviewsData"] = reviews
 
-        return res.status(200).send({status: true, message: "Books List", data: data})
-        
+        return res.status(200).send({ status: true, message: "Books List", data: data })
+
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
