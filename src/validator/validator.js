@@ -11,6 +11,7 @@ const isValidRequestBody = function (requestBody) {
 };
 
 const isValidPassword = function (password) {
+    password = password.trim()
     if (password.length < 8 || password.length > 15) {
         return false
     } return true

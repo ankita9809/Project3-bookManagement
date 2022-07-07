@@ -37,18 +37,18 @@ const createReview = async function(req, res){
         if(typeof rating != "number") {
             return res.status(400).send({ status: false, message: "rating is in wrong format" })
         };
-
         if (!validator.isValidRating(rating)) {
             return res.status(400).send({ status: false, message: "rating must be between 1 and 5" })
         };
-
-        requestBody.reviewedAt = new Date()
-
         if(isDeleted && typeof isDeleted != 'boolean') {
             return res.status(400).send({ status: false, message: "isDeleted is in wrong format" })
         };
 
+        requestBody.reviewedAt = new Date()
+        requestBody.bookId = bookId
+        
         const reviewDoc = await reviewModel.create(requestBody)
+        await booksModel.findOneAndUpdate({_id : bookId}, { $inc : {reviews : 1}})
         return res.status(201).send({status : true, message: "Review created successfully", data: reviewDoc })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
