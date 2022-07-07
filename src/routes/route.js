@@ -11,6 +11,10 @@ router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
 router.get("/books", booksController.getAllBook)
 
+//=================================Books========================================
+router.post("/books",mid.auth,booksController.bookCreation)
+router.put("/books/:bookId", mid.auth, booksController.updateBook)
+
 const check = function(req,res){
     console.log("end")
     res.send("login ")
@@ -18,5 +22,8 @@ const check = function(req,res){
 router.get("/test", mid.auth, check)
 
 
+// ------------------------- DELETE BOOKS --------------------------------------------
+
+router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
 
 module.exports = router;
