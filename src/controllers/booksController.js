@@ -1,7 +1,6 @@
 const booksModel = require("../models/booksModel")
 const userModel = require("../models/userModel")
 const validator = require('../validator/validator')
-const validateDate = require("validate-date");
 
 // --------------------------- REGEX -----------------------------
 const stringRegex = /^[ a-z ]+$/i
@@ -29,8 +28,8 @@ const bookCreation = async function (req, res) {
         if (!userId.match(/^[0-9a-fA-F]{24}$/)){
             return res.status(400).send({status: false,msg: "Incorrect userId format"})
         } 
-        //Authentication
-        if (userId !=  req.userId ) {
+
+        if (userId != req.token.userId ) {
             return res.status(403).send({
                 status: false,
                 message: "Unauthorized access ! User's credentials do not match."
@@ -55,8 +54,8 @@ const bookCreation = async function (req, res) {
         if (!validator.isValid(releasedAt)) {
             return res.status(400).send({ status: false, message: "releasedAt must be present" })
         };
-        if (!validateDate(releasedAt, responseType = 'boolean')) {
-            return res.status(400).send({ status: false, message: `Invalid date format. Please provide date as 'YYYY-MM-DD'.` })
+        if(!validator.isValidDate(releasedAt)) {
+            return res.status(400).send({ status: false, message: "releasedAt is in incorrect format (YYYY-MM-DD)" })
         }
          //searching title & ISBN in database to maintain their uniqueness.
           let checkBook = await booksModel.findOne({ title: title })
@@ -92,16 +91,16 @@ const getBooksById = async function(req,res){
 
 const updateBook = async function(req, res) {
     try {
-        let bookId = req.params.bookId
+        let bookId = req.params.bookId   
         if (!bookId.match(/^[0-9a-fA-F]{24}$/)){
             return res.status(400).send({status: false,msg: "Incorrect Blog Id format"})
-        }   
+        } 
 
         let book = await booksModel.findById(bookId)
         if(!book || book.isDeleted == true){
             return res.status(404).send({status : false, msg : "No Book Found"})
         }
-        if(req.token.userId !== book.userId){
+        if(req.token.userId != book.userId){
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }   
         if(!validator.isValidRequestBody(req.body)){
@@ -109,26 +108,36 @@ const updateBook = async function(req, res) {
         };
 
         let {title, excerpt, releasedAt, ISBN} = req.body
-        if (title && !validator.isValid(title)) {
-            return res.status(400).send({ status: false, message: "Title is in incorrect format" })
-        };
-        let checkBook = await booksModel.find({title})
-        if(checkBook){
-            return res.status(400).send({ status: false, message: "Title already used" })
-        }
+        if (title){
+            if(!validator.isValid(title)) {
+                return res.status(400).send({ status: false, message: "Title is in incorrect format" })
+            };
+            let checkBook = await booksModel.findOne({title})
+            if(checkBook){
+                return res.status(400).send({ status: false, message: "Title already used" })
+            }
+        } 
         if (excerpt && !validator.isValid(excerpt)) {
             return res.status(400).send({ status: false, message: "excerpt is in incorrect format" })
         };
-        if (ISBN && !validator.isValid(ISBN)) {
-            return res.status(400).send({ status: false, message: "ISBN is in incorrect format" })
-        };
-        let checkBook2 = await booksModel.find({ISBN})
-        if(checkBook2){
-            return res.status(400).send({ status: false, message: "ISBN already used" })
-        }
-        if (releasedAt && !validator.isValid(releasedAt)) {
-            return res.status(400).send({ status: false, message: "releasedAt is in incorrect format" })
-        };
+        if (ISBN){
+            if(!validator.isValid(ISBN)) {
+                return res.status(400).send({ status: false, message: "ISBN is in incorrect format" })
+            };
+            let checkBook2 = await booksModel.findOne({ISBN})
+            if(checkBook2){
+                return res.status(400).send({ status: false, message: "ISBN already used" })
+            }
+        } 
+        if (releasedAt){
+            if(!validator.isValid(releasedAt)) {
+                return res.status(400).send({ status: false, message: "releasedAt is required" })
+            };
+            if(!validator.isValidDate(releasedAt)) {
+                return res.status(400).send({ status: false, message: "releasedAt is in incorrect format (YYYY-MM-DD)" })
+            }
+        } 
+        
 
         let updatedBook = await booksModel.findOneAndUpdate({_id : bookId}, {...req.body}, {new : true})
 
@@ -149,7 +158,7 @@ const deleteBooksById = async function(req, res){
         if(!book || book.isDeleted == true){
             return res.status(404).send({ status: false, message: "No such book exist"})
         };
-        if(req.token.userId !== book.userId){
+        if(req.token.userId != book.userId){
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
 
@@ -164,3 +173,4 @@ const deleteBooksById = async function(req, res){
 }
 
 module.exports = { bookCreation, getBooksById, updateBook, deleteBooksById }
+

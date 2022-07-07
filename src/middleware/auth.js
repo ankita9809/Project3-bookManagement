@@ -10,7 +10,6 @@ const auth = function(req, res, next){
             if(err) return res.status(401).send({status : false, message : "Incorrect token"})
 
             req.token = decodedToken
-            req.userId = decodedToken.userId;
             next()
         })
     } catch (error) {
