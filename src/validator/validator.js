@@ -19,4 +19,5 @@ const isValidPassword = function(password){
     } return true
 }
 
+
 module.exports = { isValid, isValidRequestBody, isValidPassword } 
