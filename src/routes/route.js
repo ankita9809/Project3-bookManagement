@@ -6,19 +6,19 @@ const reviewController = require("../controllers/reviewController");
 const mid = require("../middleware/auth")
 
 
-// ---------------------------- CREATE USER ------------------------------------------
+// ---------------------------- USER APIs ------------------------------------------
 router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
 
-//=================================Books========================================
+
+// ---------------------------- BOOKS APIs ------------------------------------------
 router.post("/books",mid.auth,booksController.bookCreation)
+router.get("/books",mid.auth, booksController.getAllBook)
+router.get("/books/:bookId",mid.auth, booksController.getBooksById)
 router.put("/books/:bookId", mid.auth, booksController.updateBook)
-
-// ------------------------- DELETE BOOKS --------------------------------------------
-
 router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
 
-//=================================Books========================================
+// ---------------------------- Review APIs ------------------------------------------
 router.post("/books/:bookId/review", reviewController.createReview)
 
 module.exports = router;
