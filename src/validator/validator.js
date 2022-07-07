@@ -1,7 +1,4 @@
-const mongoose = require('mongoose');
-const userModel = require('../models/userModel');
-
-
+const moment =  require('moment')
 
 const isValid = function(value) {
     if (typeof value === 'undefined' || value === null) return false 
@@ -19,5 +16,8 @@ const isValidPassword = function(password){
     } return true
 }
 
+const isValidDate = function(date) {
+    return moment(date, 'YYYY-MM-DD', true).isValid()
+}
 
-module.exports = { isValid, isValidRequestBody, isValidPassword } 
+module.exports = { isValid, isValidRequestBody, isValidPassword, isValidDate} 
