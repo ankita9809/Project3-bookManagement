@@ -23,23 +23,23 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Title is required" })
         };
         if (["Mr", "Mrs", "Miss"].indexOf(title) == -1) {
-            return res.status(400).send({ status: false, msg: "Invalid title, Please select from Mr, Mrs, Miss" })
+            return res.status(400).send({ status: false, message: "Invalid title, Please select from Mr, Mrs, Miss" })
         };
         if (!validator.isValid(name)) {
             return res.status(400).send({ status: false, message: "Name is required" })
         };
         if (!name.match(nameRegex)) {
-            return res.status(400).send({ status: false, msg: "Please Provide correct input for name" })
+            return res.status(400).send({ status: false, message: "Please Provide correct input for name" })
         };
         if (!validator.isValid(phone)) {
             return res.status(400).send({ status: false, message: "Phone is required" })
         };
         if (!mobileRegex.test(phone)) {
-            return res.status(400).send({ status: false, msg: "Please Provide valid Mobile No" })
+            return res.status(400).send({ status: false, message: "Please Provide valid Mobile No" })
         };
         let duplicateMobile = await userModel.findOne({ phone: phone });
         if (duplicateMobile) {
-            return res.status(400).send({ status: false, msg: "Mobile No. already exists!" });
+            return res.status(400).send({ status: false, message: "Mobile No. already exists!" });
         };
         if (!validator.isValid(email)) {
             return res.status(400).send({ status: false, message: "Email id is required" })
@@ -49,7 +49,7 @@ const createUser = async function (req, res) {
         };
         let duplicateEmail = await userModel.findOne({ email: email });
         if (duplicateEmail) {
-            return res.status(400).send({ status: false, msg: "Email already exists!" });
+            return res.status(400).send({ status: false, message: "Email already exists!" });
         };
         if (!validator.isValid(password)) {
             return res.status(400).send({ status: false, message: "Password is required" })

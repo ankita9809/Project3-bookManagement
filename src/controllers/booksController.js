@@ -50,7 +50,7 @@ const bookCreation = async function (req, res) {
         };
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
-    }
+    } 
 }
 
 // ---------------------------- GET /books/:bookId -----------------
