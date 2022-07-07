@@ -14,15 +14,11 @@ router.post("/login", userController.loginUser)
 router.post("/books",mid.auth,booksController.bookCreation)
 router.put("/books/:bookId", mid.auth, booksController.updateBook)
 
-const check = function(req,res){
-    console.log("end")
-    res.send("login ")
-}
-router.get("/test", mid.auth, check)
-
-
 // ------------------------- DELETE BOOKS --------------------------------------------
 
 router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
+
+//=================================Books========================================
+router.post("/books/:bookId/review", reviewController.createReview)
 
 module.exports = router;

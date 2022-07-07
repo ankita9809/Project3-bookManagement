@@ -17,7 +17,14 @@ const isValidPassword = function(password){
 }
 
 const isValidDate = function(date) {
+    if(typeof date != "string") return false
     return moment(date, 'YYYY-MM-DD', true).isValid()
 }
 
-module.exports = { isValid, isValidRequestBody, isValidPassword, isValidDate} 
+const isValidRating = function(rating){
+    if(rating < 1 || rating > 5){
+        return false
+    } return true
+}
+
+module.exports = { isValid, isValidRequestBody, isValidPassword, isValidDate, isValidRating} 
