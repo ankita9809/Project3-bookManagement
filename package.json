@@ -5,11 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-<<<<<<< HEAD
-    "start":"nodemon src/index.js"
-=======
-    "start": "node src/index.js"
->>>>>>> ec4bd0eb9db9fb6b8ac03ad6fb3b384335de4a26
+    "start": "nodemon src/index.js"
   },
   "author": "Ankita-Arjun-Chetan-Chetanya",
   "license": "ISC",
@@ -19,10 +15,6 @@
     "moment": "^2.29.3",
     "mongoose": "^6.4.3",
     "nodemon": "^2.0.19",
-<<<<<<< HEAD
-    "validator": "^13.7.0"
-=======
     "validate-date": "^2.0.0"
->>>>>>> ec4bd0eb9db9fb6b8ac03ad6fb3b384335de4a26
   }
 }

@@ -1,5 +1,6 @@
 const { isValidObjectId } = require("mongoose")
 const booksModel = require("../models/booksModel")
+const reviewModel = require("../models/reviewModel")
 const validator = require('../validator/validator')
 
 
@@ -86,6 +87,10 @@ const getAllBook = async function (req, res) {
     try {
 
         const queryParams = req.query
+        if (queryParams.userId && !queryParams.userId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).send({ status: false, msg: "Incorrect userId" })
+        }
+
 
         const books = await booksModel.find({ ...queryParams, isDeleted: false }).sort({ title: 1 }).select('_id title excerpt userId category releasedAt reviews')
 
@@ -97,7 +102,7 @@ const getAllBook = async function (req, res) {
 
     }
     catch (error) {
-        return res.status(500).send({ status: false, message: err.message })
+        return res.status(500).send({ status: false, message: error.message })
 
     }
 }
@@ -106,6 +111,8 @@ const getAllBook = async function (req, res) {
 const getBooksById = async function (req, res) {
     try {
         const bookId = req.params.bookId;
+
+
 
 
     } catch (err) {
