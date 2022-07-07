@@ -2,6 +2,7 @@ const booksModel = require("../models/booksModel")
 const userModel = require("../models/userModel")
 const validator = require('../validator/validator')
 const validateDate = require("validate-date");
+const moment = require("moment")
 
 // --------------------------- REGEX -----------------------------
 const stringRegex = /^[ a-z ]+$/i
@@ -79,7 +80,7 @@ const bookCreation = async function (req, res) {
 
 const getBooksById = async function(req,res){
     try{
-        const booksId = req.params.booksId;
+        const bookId = req.params.bookId;
 
 
     }catch(err){
@@ -88,7 +89,7 @@ const getBooksById = async function(req,res){
 }
 
 
-//  ------------------------------------ PUT /books/:boksId --------------------
+//  ------------------------------------ PUT /books/:bookId --------------------
 
 const updateBook = async function(req, res) {
     try {
@@ -143,17 +144,20 @@ const updateBook = async function(req, res) {
 
 const deleteBooksById = async function(req, res){
     try{
-        const booksId = req.params.booksId
+        const booksId = req.params.bookId
+        if (!booksId.match(/^[0-9a-fA-F]{24}$/)){
+            return res.status(400).send({status: false,msg: "Incorrect Book Id format"})
+        }
 
         let book = await booksModel.findById(booksId)
         if(!book || book.isDeleted == true){
             return res.status(404).send({ status: false, message: "No such book exist"})
         };
-        if(req.token.userId !== book.userId){
+        if(req.token.userId != book.userId){
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
 
-        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: moment().format("YYYY-MM-DD Th:mm:ss")})
+        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: new Date()})
         res.status(200).send({status: true, message: "Book deleted successfully"})
 
 
