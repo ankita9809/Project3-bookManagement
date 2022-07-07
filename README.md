@@ -83,7 +83,7 @@
 - Filter books list by applying filters. Query param can have any combination of below filters.
   - By userId
   - By category
-  - By subcategory
+  - By subcategory 
   example of a query url: books?filtername=filtervalue&f2=fv2
 - Return all books sorted by book name in Alphabatical order
 
