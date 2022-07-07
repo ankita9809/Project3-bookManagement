@@ -9,6 +9,7 @@ const mid = require("../middleware/auth")
 // ---------------------------- CREATE USER ------------------------------------------
 router.post("/register", userController.createUser)
 router.post("/login", userController.loginUser)
+router.get("/books", booksController.getAllBook)
 
 const check = function(req,res){
     console.log("end")
