@@ -6,7 +6,7 @@ const secretKey = 'CACA'
 // --------------------------- REGEX -----------------------------
 const nameRegex = /^[ a-z ]+$/i
 const mobileRegex = /^[6-9]\d{9}$/
-const emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
+const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 
 // ----------------------- CREATE USER -------------------

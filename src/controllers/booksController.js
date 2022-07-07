@@ -71,14 +71,14 @@ const bookCreation = async function (req, res) {
         return res.status(201).send({ status: true, message: "Book created successfully", data: newBook })
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
-    }
+    } 
 }
 
 // ---------------------------- GET /books/:bookId -----------------
 
 const getBooksById = async function(req,res){
     try{
-        const booksId = req.params.booksId;
+        const bookId = req.params.bookId;
 
 
     }catch(err){
@@ -87,7 +87,7 @@ const getBooksById = async function(req,res){
 }
 
 
-//  ------------------------------------ PUT /books/:boksId --------------------
+//  ------------------------------------ PUT /books/:bookId --------------------
 
 const updateBook = async function(req, res) {
     try {
@@ -152,7 +152,10 @@ const updateBook = async function(req, res) {
 
 const deleteBooksById = async function(req, res){
     try{
-        const booksId = req.params.booksId
+        const booksId = req.params.bookId
+        if (!booksId.match(/^[0-9a-fA-F]{24}$/)){
+            return res.status(400).send({status: false,msg: "Incorrect Book Id format"})
+        }
 
         let book = await booksModel.findById(booksId)
         if(!book || book.isDeleted == true){
@@ -162,7 +165,7 @@ const deleteBooksById = async function(req, res){
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
 
-        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: moment().format("YYYY-MM-DD Th:mm:ss")})
+        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: new Date()})
         res.status(200).send({status: true, message: "Book deleted successfully"})
 
 
