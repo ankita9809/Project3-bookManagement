@@ -52,11 +52,10 @@ const bookCreation = async function (req, res) {
         if(!ISBN) {
             return res.status(400).send({ status: false, message: "ISBN is required" })
         };
-        if(!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
+        if (!validator.isValid(ISBN)) {
             return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
         };
-
-        if (!validator.isValid(ISBN)) {
+        if(!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
             return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
         };
 
@@ -67,7 +66,7 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "category is in wrong format" })
         };
         if (!category.match(stringRegex)) {
-            return res.status(400).send({ status: false, message: "category cannot be number" })
+            return res.status(400).send({ status: false, message: "category cannot contain numbers" })
         };
 
         if(!subcategory) {
