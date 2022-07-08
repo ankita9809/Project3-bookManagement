@@ -241,7 +241,7 @@ const deleteBooksById = async function (req, res) {
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
 
-        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: new Date()})
+        await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: new Date()})
         return res.status(200).send({status: true, message: "Book deleted successfully"})
 
 

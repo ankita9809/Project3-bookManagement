@@ -20,6 +20,7 @@ router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
 
 // ---------------------------- Review APIs ------------------------------------------
 router.post("/books/:bookId/review", reviewController.createReview)
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReviwsById)
 
 
 module.exports = router;

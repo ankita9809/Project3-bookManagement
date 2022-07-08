@@ -12,7 +12,7 @@ const createReview = async function(req, res){
 
         let {reviewedBy, reviewedAt, rating, review, isDeleted} = requestBody
         if (!validator.isValid(bookId)) {
-            return res.status(400).send({ status: false, message: "bookId must be present" })
+            return res.status(400).send({ status: false, message: "bookId is in wrong format" })
         };
         if (!bookId.match(/^[0-9a-fA-F]{24}$/)){
             return res.status(400).send({status: false,msg: "Incorrect bookId format"})
@@ -25,17 +25,21 @@ const createReview = async function(req, res){
         if (!validator.isValidRequestBody(requestBody)) { 
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide book details' })
         }
+
+        if(!reviewedBy) {
+            return res.status(400).send({ status: false, message: "reviewedBy is required" })
+        };
         if (!validator.isValid(reviewedBy)) {
-            return res.status(400).send({ status: false, message: "reviewedBy must be present" })
+            return res.status(400).send({ status: false, message: "reviewedBy is in wrong format" })
         };
         if (!reviewedBy.match(/^[ a-z ]+$/i)) {
             return res.status(400).send({ status: false, message: "reviewedBy is in wrong format" })
         };
         if (review && !validator.isValid(review)) {
-            return res.status(400).send({ status: false, message: "review must be present" })
+            return res.status(400).send({ status: false, message: "review is in wrong format" })
         };
-        if (!validator.isValid(rating)) {
-            return res.status(400).send({ status: false, message: "rating must be present" })
+        if (!rating) {
+            return res.status(400).send({ status: false, message: "rating is required" })
         };
         if(typeof rating != "number") {
             return res.status(400).send({ status: false, message: "rating is in wrong format" })
@@ -62,18 +66,31 @@ const createReview = async function(req, res){
 
 const deleteReviwsById = async function(req, res){
     try{
-        bookId = req.params.bookId;
-        if (!booksId.match(/^[0-9a-fA-F]{24}$/)) {
+        let bookId = req.params.bookId;
+        if (!bookId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, message: "Incorrect Book Id format" })
         }
-        reviewId = req.params.reviewId;
+        let reviewId = req.params.reviewId;
         if (!reviewId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, message: "Incorrect Review Id format" })
         }
 
+        let book = await booksModel.findById(bookId)
+        if(!book || book.isDeleted == true) {
+            return res.status(404).send({ status: false, message: "Book not found" })
+        }
+        let review = await reviewModel.findById(reviewId)
+        if(!review || review.isDeleted == true) {
+            return res.status(404).send({ status: false, message: "Review not found" })
+        }
+
+        await reviewModel.findOneAndUpdate({_id : reviewId}, {isDeleted : true}, {new : true})
+        await booksModel.findOneAndUpdate({_id : bookId}, { $inc : {reviews : -1}})
+
+        return res.status(200).send({status: true, message: "Review deleted successfully"})
 
     }catch (err){
-        return res.status(500).send({status: fallse, message: err.message})
+        return res.status(500).send({status: false, message: err.message})
     }
 }
 
