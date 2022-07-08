@@ -76,9 +76,6 @@ const bookCreation = async function (req, res) {
         if (typeof subcategory != "object" && typeof subcategory != "string") {
             return res.status(400).send({ status: false, message: "subcategory is in wrong format" })
         };
-        // if (!subcategory.match(stringRegex)) {
-        //     return res.status(400).send({ status: false, message: "subcategory cannot be number" })
-        // };
 
         if(!releasedAt) {
             return res.status(400).send({ status: false, message: "releasedAt is required" })
@@ -208,7 +205,7 @@ const updateBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: "ISBN already used" })
             }
         }
-        if (releasedAt) {       //validation check krni hai
+        if (releasedAt) {       
             if (!validator.isValid(releasedAt) || !validator.isValidDate(releasedAt)) {
                 return res.status(400).send({ status: false, message: "releasedAt is in incorrect format required (YYYY-MM-DD)" })
             };
