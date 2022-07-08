@@ -76,9 +76,6 @@ const bookCreation = async function (req, res) {
         if (typeof subcategory != "object" && typeof subcategory != "string") {
             return res.status(400).send({ status: false, message: "subcategory is in wrong format" })
         };
-        // if (!subcategory.match(stringRegex)) {
-        //     return res.status(400).send({ status: false, message: "subcategory cannot be number" })
-        // };
 
         if(!releasedAt) {
             return res.status(400).send({ status: false, message: "releasedAt is required" })
@@ -202,6 +199,9 @@ const updateBook = async function (req, res) {
         if (ISBN) {
             if (!validator.isValid(ISBN)) {
                 return res.status(400).send({ status: false, message: "ISBN is in incorrect format" })
+            };
+            if(!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
+                return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
             };
             let checkBook2 = await booksModel.findOne({ ISBN })
             if (checkBook2) {
