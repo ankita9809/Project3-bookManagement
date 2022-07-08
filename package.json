@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"nodemon src/index.js"
+    "start": "nodemon src/index.js"
   },
   "author": "Ankita-Arjun-Chetan-Chetanya",
   "license": "ISC",
@@ -14,7 +14,6 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.3",
     "mongoose": "^6.4.3",
-    "nodemon": "^2.0.19",
-    "validate-date": "^2.0.0"
+    "nodemon": "^2.0.19"
   }
 }

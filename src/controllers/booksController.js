@@ -1,6 +1,5 @@
 const reviewModel = require("../models/reviewModel")
 const booksModel = require("../models/booksModel")
-const reviewModel = require("../models/reviewModel")
 const validator = require('../validator/validator')
 
 
@@ -86,7 +85,7 @@ const getAllBook = async function (req, res) {
 
         const queryParams = req.query
         if (queryParams.userId && !queryParams.userId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).send({ status: false, msg: "Incorrect userId" })
+            return res.status(400).send({ status: false, message: "Incorrect userId" })
         }
 
 
@@ -118,9 +117,6 @@ const getBooksById = async function (req, res) {
         if (!allData) {
             return res.status(404).send({ status: false, message: "Book doesn't exists...!" })
         }
-        if (req.token.userId != allData.userId) {
-            return res.status(403).send({ status: false, message: "Not Authorised" })
-        }
         const reviews = await reviewModel.find({ bookId: allData._id, isDeleted: false }).select({
             _id: 1,
             bookId: 1,
@@ -129,6 +125,7 @@ const getBooksById = async function (req, res) {
             rating: 1,
             review: 1
         })
+        console.log(reviews)
 
         const data = allData.toObject()  //to change mongoose document into objects (#function .toObject() in mongoose)
         data["reviewsData"] = reviews
@@ -182,7 +179,7 @@ const updateBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: "ISBN already used" })
             }
         }
-        if (releasedAt) {
+        if (releasedAt) {       //validation check krni hai
             if (!validator.isValid(releasedAt)) {
                 return res.status(400).send({ status: false, message: "releasedAt is required" })
             };
@@ -198,7 +195,7 @@ const updateBook = async function (req, res) {
         res.status(500).send({ status: false, message: error.message })
     }
 }
-
+ 
 // ------------------------- DELETE /books/:booksId -------------------
 
 const deleteBooksById = async function (req, res) {
