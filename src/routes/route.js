@@ -18,8 +18,8 @@ router.get("/books/:bookId",mid.auth, booksController.getBooksById)
 router.put("/books/:bookId", mid.auth, booksController.updateBook)
 router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
 
-
-// ---------------------------- REVIEWS APIs --------------------------------------------
+// ---------------------------- Review APIs ------------------------------------------
+router.post("/books/:bookId/review", reviewController.createReview)
 
 
 module.exports = router;

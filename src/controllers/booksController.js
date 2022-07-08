@@ -73,8 +73,8 @@ const bookCreation = async function (req, res) {
         const newBook = await booksModel.create(requestBody);
         return res.status(201).send({ status: true, message: "Book created successfully", data: newBook })
     } catch (error) {
-        res.status(500).send({ status: false, message: error.message })
-    }
+        return res.status(500).send({ status: false, message: error.message })
+    } 
 }
 
 // ----------------------------GET ALL BOOKS -----------------------------------
@@ -213,8 +213,8 @@ const deleteBooksById = async function (req, res) {
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
 
-        let deletedBook = await booksModel.findOneAndUpdate({ _id: booksId }, { isDeleted: true, deletedAt: new Date() })
-        res.status(200).send({ status: true, message: "Book deleted successfully" })
+        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: new Date()})
+        return res.status(200).send({status: true, message: "Book deleted successfully"})
 
 
     } catch (err) {
