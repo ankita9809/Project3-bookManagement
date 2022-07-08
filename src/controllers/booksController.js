@@ -1,11 +1,12 @@
-
+const reviewModel = require("../models/reviewModel")
 const booksModel = require("../models/booksModel")
 const validator = require('../validator/validator')
 
 
-
 // --------------------------- REGEX -----------------------------
+
 const stringRegex = /^[ a-z ]+$/i
+
 // ------------------------------- CREATE BOOKS ----------------------------------------------------------
 
 const bookCreation = async function (req, res) {
@@ -28,7 +29,7 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "userId must be present" })
         };
         if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).send({ status: false, msg: "Incorrect userId format" })
+            return res.status(400).send({ status: false, message: "Incorrect userId format" })
         }
 
         if (userId != req.token.userId) {
@@ -45,13 +46,13 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "category must be present" })
         };
         if (!category.match(stringRegex)) {
-            return res.status(400).send({ status: false, msg: "category cannot be number" })
+            return res.status(400).send({ status: false, message: "category cannot be number" })
         };
         if (!validator.isValid(subcategory)) {
             return res.status(400).send({ status: false, message: "subcategory must be present" })
         };
         if (!subcategory.match(stringRegex)) {
-            return res.status(400).send({ status: false, msg: "subcategory cannot be number" })
+            return res.status(400).send({ status: false, message: "subcategory cannot be number" })
         };
         if (!validator.isValid(releasedAt)) {
             return res.status(400).send({ status: false, message: "releasedAt must be present" })
@@ -72,20 +73,21 @@ const bookCreation = async function (req, res) {
         const newBook = await booksModel.create(requestBody);
         return res.status(201).send({ status: true, message: "Book created successfully", data: newBook })
     } catch (error) {
-        return res.status(500).send({ status: false, message: err.message })
-
-    }
-
+        return res.status(500).send({ status: false, message: error.message })
+    } 
 }
 
-// ----------------------------GET ALL BOOKS----------------
-
+// ----------------------------GET ALL BOOKS -----------------------------------
 
 const getAllBook = async function (req, res) {
 
     try {
 
         const queryParams = req.query
+        if (queryParams.userId && !queryParams.userId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).send({ status: false, message: "Incorrect userId" })
+        }
+
 
         const books = await booksModel.find({ ...queryParams, isDeleted: false }).sort({ title: 1 }).select('_id title excerpt userId category releasedAt reviews')
 
@@ -97,22 +99,43 @@ const getAllBook = async function (req, res) {
 
     }
     catch (error) {
-        return res.status(500).send({ status: false, message: err.message })
+        return res.status(500).send({ status: false, message: error.message })
 
     }
 }
+
 // ---------------------------- GET /books/:bookId -----------------
 
 const getBooksById = async function (req, res) {
     try {
         const bookId = req.params.bookId;
+        if (!bookId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).send({ status: false, message: "Incorrect Book Id format" })
+        }
 
+        const allData = await booksModel.findOne({ _id: bookId, isDeleted: false })
+        if (!allData) {
+            return res.status(404).send({ status: false, message: "Book doesn't exists...!" })
+        }
+        const reviews = await reviewModel.find({ bookId: allData._id, isDeleted: false }).select({
+            _id: 1,
+            bookId: 1,
+            reviewedBy: 1,
+            reviewedAt: 1,
+            rating: 1,
+            review: 1
+        })
+        console.log(reviews)
+
+        const data = allData.toObject()  //to change mongoose document into objects (#function .toObject() in mongoose)
+        data["reviewsData"] = reviews
+
+        return res.status(200).send({ status: true, message: "Books List", data: data })
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
 }
-
 
 //  ------------------------------------ PUT /books/:bookId --------------------
 
@@ -120,12 +143,12 @@ const updateBook = async function (req, res) {
     try {
         let bookId = req.params.bookId
         if (!bookId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).send({ status: false, msg: "Incorrect Blog Id format" })
+            return res.status(400).send({ status: false, message: "Incorrect Blog Id format" })
         }
 
         let book = await booksModel.findById(bookId)
         if (!book || book.isDeleted == true) {
-            return res.status(404).send({ status: false, msg: "No Book Found" })
+            return res.status(404).send({ status: false, message: "No Book Found" })
         }
         if (req.token.userId != book.userId) {
             return res.status(403).send({ status: false, message: "Not Authorised" })
@@ -156,7 +179,7 @@ const updateBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: "ISBN already used" })
             }
         }
-        if (releasedAt) {
+        if (releasedAt) {       //validation check krni hai
             if (!validator.isValid(releasedAt)) {
                 return res.status(400).send({ status: false, message: "releasedAt is required" })
             };
@@ -165,7 +188,6 @@ const updateBook = async function (req, res) {
             }
         }
 
-
         let updatedBook = await booksModel.findOneAndUpdate({ _id: bookId }, { ...req.body }, { new: true })
 
         return res.status(200).send({ status: true, message: "Success", data: updatedBook })
@@ -173,16 +195,14 @@ const updateBook = async function (req, res) {
         res.status(500).send({ status: false, message: error.message })
     }
 }
-
-
-
+ 
 // ------------------------- DELETE /books/:booksId -------------------
 
 const deleteBooksById = async function (req, res) {
     try {
         const booksId = req.params.bookId
         if (!booksId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).send({ status: false, msg: "Incorrect Book Id format" })
+            return res.status(400).send({ status: false, message: "Incorrect Book Id format" })
         }
 
         let book = await booksModel.findById(booksId)
@@ -193,14 +213,13 @@ const deleteBooksById = async function (req, res) {
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
 
-        let deletedBook = await booksModel.findOneAndUpdate({ _id: booksId }, { isDeleted: true, deletedAt: new Date() })
-        res.status(200).send({ status: true, message: "Book deleted successfully" })
+        let deletedBook = await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: new Date()})
+        return res.status(200).send({status: true, message: "Book deleted successfully"})
 
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
-
 }
 
 module.exports = { bookCreation, getAllBook, getBooksById, updateBook, deleteBooksById }
