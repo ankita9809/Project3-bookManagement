@@ -6,6 +6,8 @@ const validator = require('../validator/validator')
 // --------------------------- REGEX -----------------------------
 
 const stringRegex = /^[ a-z ]+$/i
+const isbn10 = /^(?=(?:\D*\d){7}(?:(?:\D*\d){3})?$)[\d-]+$/
+const isbn13 = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
 
 // ------------------------------- CREATE BOOKS ----------------------------------------------------------
 
@@ -17,16 +19,25 @@ const bookCreation = async function (req, res) {
         if (!validator.isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide book details' })
         }
+        if(!title) {
+            return res.status(400).send({ status: false, message: "Title is required" })
+        };
         if (!validator.isValid(title)) {
-            return res.status(400).send({ status: false, message: "Title   must be present" })
+            return res.status(400).send({ status: false, message: "Title is in wrong format" })
         };
 
+        if(!excerpt) {
+            return res.status(400).send({ status: false, message: "excerpt is required" })
+        };
         if (!validator.isValid(excerpt)) {
-            return res.status(400).send({ status: false, message: "excerpt must be present" })
+            return res.status(400).send({ status: false, message: "excerpt is in wrong format" })
         };
-
+        
+        if(!userId) {
+            return res.status(400).send({ status: false, message: "userId is required" })
+        };
         if (!validator.isValid(userId)) {
-            return res.status(400).send({ status: false, message: "userId must be present" })
+            return res.status(400).send({ status: false, message: "userId is in wrong format" })
         };
         if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, message: "Incorrect userId format" })
@@ -38,24 +49,42 @@ const bookCreation = async function (req, res) {
                 message: "Unauthorized access ! User's credentials do not match."
             })
         }
-        if (!validator.isValid(ISBN)) {
-            return res.status(400).send({ status: false, message: "ISBN must be present" })
+        if(!ISBN) {
+            return res.status(400).send({ status: false, message: "ISBN is required" })
+        };
+        if(!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
+            return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
         };
 
+        if (!validator.isValid(ISBN)) {
+            return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
+        };
+
+        if(!category) {
+            return res.status(400).send({ status: false, message: "category is required" })
+        };
         if (!validator.isValid(category)) {
-            return res.status(400).send({ status: false, message: "category must be present" })
+            return res.status(400).send({ status: false, message: "category is in wrong format" })
         };
         if (!category.match(stringRegex)) {
             return res.status(400).send({ status: false, message: "category cannot be number" })
         };
-        if (!validator.isValid(subcategory)) {
-            return res.status(400).send({ status: false, message: "subcategory must be present" })
+
+        if(!subcategory) {
+            return res.status(400).send({ status: false, message: "subcategory is required" })
         };
-        if (!subcategory.match(stringRegex)) {
-            return res.status(400).send({ status: false, message: "subcategory cannot be number" })
+        if (typeof subcategory != "object" && typeof subcategory != "string") {
+            return res.status(400).send({ status: false, message: "subcategory is in wrong format" })
+        };
+        // if (!subcategory.match(stringRegex)) {
+        //     return res.status(400).send({ status: false, message: "subcategory cannot be number" })
+        // };
+
+        if(!releasedAt) {
+            return res.status(400).send({ status: false, message: "releasedAt is required" })
         };
         if (!validator.isValid(releasedAt)) {
-            return res.status(400).send({ status: false, message: "releasedAt must be present" })
+            return res.status(400).send({ status: false, message: "releasedAt is in wrong format" })
         };
         if (!validator.isValidDate(releasedAt)) {
             return res.status(400).send({ status: false, message: "releasedAt is in incorrect format (YYYY-MM-DD)" })
@@ -180,12 +209,12 @@ const updateBook = async function (req, res) {
             }
         }
         if (releasedAt) {       //validation check krni hai
-            if (!validator.isValid(releasedAt)) {
-                return res.status(400).send({ status: false, message: "releasedAt is required" })
+            if (!validator.isValid(releasedAt) || !validator.isValidDate(releasedAt)) {
+                return res.status(400).send({ status: false, message: "releasedAt is in incorrect format required (YYYY-MM-DD)" })
             };
-            if (!validator.isValidDate(releasedAt)) {
-                return res.status(400).send({ status: false, message: "releasedAt is in incorrect format (YYYY-MM-DD)" })
-            }
+            // if () {
+            //     return res.status(400).send({ status: false, message: "releasedAt is in incorrect format (YYYY-MM-DD)" })
+            // }
         }
 
         let updatedBook = await booksModel.findOneAndUpdate({ _id: bookId }, { ...req.body }, { new: true })

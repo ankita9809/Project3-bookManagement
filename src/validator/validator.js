@@ -1,7 +1,8 @@
 const moment = require('moment')
 
 const isValid = function (value) {
-    if (typeof value === 'undefined' || value === null) return false
+    //if (typeof value === 'undefined' || value === null) return false
+    if (typeof value !== "string")   return false
     if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
 };
@@ -27,5 +28,6 @@ const isValidRating = function(rating){
         return false
     } return true
 }
+
 
 module.exports = { isValid, isValidRequestBody, isValidPassword, isValidDate, isValidRating} 

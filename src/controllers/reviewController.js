@@ -1,4 +1,3 @@
-module.exports = {deleteReviwsById}
 const booksModel = require("../models/booksModel")
 const reviewModel = require("../models/reviewModel")
 const validator = require('../validator/validator')
