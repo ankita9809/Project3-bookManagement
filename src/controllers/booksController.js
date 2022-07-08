@@ -19,21 +19,21 @@ const bookCreation = async function (req, res) {
         if (!validator.isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide book details' })
         }
-        if(!title) {
+        if (!title) {
             return res.status(400).send({ status: false, message: "Title is required" })
         };
         if (!validator.isValid(title)) {
             return res.status(400).send({ status: false, message: "Title is in wrong format" })
         };
 
-        if(!excerpt) {
+        if (!excerpt) {
             return res.status(400).send({ status: false, message: "excerpt is required" })
         };
         if (!validator.isValid(excerpt)) {
             return res.status(400).send({ status: false, message: "excerpt is in wrong format" })
         };
-        
-        if(!userId) {
+
+        if (!userId) {
             return res.status(400).send({ status: false, message: "userId is required" })
         };
         if (!validator.isValid(userId)) {
@@ -49,17 +49,17 @@ const bookCreation = async function (req, res) {
                 message: "Unauthorized access ! User's credentials do not match."
             })
         }
-        if(!ISBN) {
+        if (!ISBN) {
             return res.status(400).send({ status: false, message: "ISBN is required" })
         };
         if (!validator.isValid(ISBN)) {
             return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
         };
-        if(!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
+        if (!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
             return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
         };
 
-        if(!category) {
+        if (!category) {
             return res.status(400).send({ status: false, message: "category is required" })
         };
         if (!validator.isValid(category)) {
@@ -69,14 +69,14 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "category cannot contain numbers" })
         };
 
-        if(!subcategory) {
+        if (!subcategory) {
             return res.status(400).send({ status: false, message: "subcategory is required" })
         };
         if (typeof subcategory != "object" && typeof subcategory != "string") {
             return res.status(400).send({ status: false, message: "subcategory is in wrong format" })
         };
 
-        if(!releasedAt) {
+        if (!releasedAt) {
             return res.status(400).send({ status: false, message: "releasedAt is required" })
         };
         if (!validator.isValid(releasedAt)) {
@@ -99,7 +99,7 @@ const bookCreation = async function (req, res) {
         return res.status(201).send({ status: true, message: "Book created successfully", data: newBook })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
-    } 
+    }
 }
 
 // ----------------------------GET ALL BOOKS -----------------------------------
@@ -199,7 +199,7 @@ const updateBook = async function (req, res) {
             if (!validator.isValid(ISBN)) {
                 return res.status(400).send({ status: false, message: "ISBN is in incorrect format" })
             };
-            if(!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
+            if (!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
                 return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
             };
             let checkBook2 = await booksModel.findOne({ ISBN })
@@ -207,13 +207,10 @@ const updateBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: "ISBN already used" })
             }
         }
-        if (releasedAt) {       
+        if (releasedAt) {
             if (!validator.isValid(releasedAt) || !validator.isValidDate(releasedAt)) {
                 return res.status(400).send({ status: false, message: "releasedAt is in incorrect format required (YYYY-MM-DD)" })
             };
-            // if () {
-            //     return res.status(400).send({ status: false, message: "releasedAt is in incorrect format (YYYY-MM-DD)" })
-            // }
         }
 
         let updatedBook = await booksModel.findOneAndUpdate({ _id: bookId }, { ...req.body }, { new: true })
@@ -223,7 +220,7 @@ const updateBook = async function (req, res) {
         res.status(500).send({ status: false, message: error.message })
     }
 }
- 
+
 // ------------------------- DELETE /books/:booksId -------------------
 
 const deleteBooksById = async function (req, res) {
@@ -241,8 +238,8 @@ const deleteBooksById = async function (req, res) {
             return res.status(403).send({ status: false, message: "Not Authorised" })
         }
 
-        await booksModel.findOneAndUpdate({_id: booksId}, {isDeleted: true, deletedAt: new Date()})
-        return res.status(200).send({status: true, message: "Book deleted successfully"})
+        await booksModel.findOneAndUpdate({ _id: booksId }, { isDeleted: true, deletedAt: new Date() })
+        return res.status(200).send({ status: true, message: "Book deleted successfully" })
 
 
     } catch (err) {
