@@ -20,7 +20,7 @@ router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
 
 // ---------------------------- Review APIs ------------------------------------------
 router.post("/books/:bookId/review", reviewController.createReview)
-router.put("/books/:bookId", mid.auth ,bookControl.updateBookDetails)
+router.put("/books/:bookId/review/:reviewId", mid.auth ,reviewController.updateReview)
 
 
 
