@@ -20,7 +20,7 @@ const createReview = async function(req, res){
 
         let book = await booksModel.findById(bookId)
         if(!book || book.isDeleted == true){
-            return res.status(400).send({ status: false, message: "No book found" })
+            return res.status(404).send({ status: false, message: "No book found" })
         }
         if (!validator.isValidRequestBody(requestBody)) { 
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide book details' })
