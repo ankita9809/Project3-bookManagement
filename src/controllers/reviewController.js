@@ -19,15 +19,15 @@ const createReview = async function (req, res) {
         }
 
         let book = await booksModel.findById(bookId)
-        if (!book || book.isDeleted == true) {
-            return res.status(400).send({ status: false, message: "No book found" })
+        if(!book || book.isDeleted == true){
+            return res.status(404).send({ status: false, message: "No book found" })
         }
         if (!validator.isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide book details' })
         }
 
         if (!reviewedBy) {
-            return res.status(400).send({ status: false, message: "reviewedBy is required" })
+            reviewedBy = "Guest"
         };
         if (!validator.isValid(reviewedBy)) {
             return res.status(400).send({ status: false, message: "reviewedBy is in wrong format" })
@@ -55,8 +55,12 @@ const createReview = async function (req, res) {
         requestBody.bookId = bookId
 
         const reviewDoc = await reviewModel.create(requestBody)
+
+        let data = book.toObject();
+        data['reviewsData'] = reviewDoc;
+
         await booksModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: 1 } })
-        return res.status(201).send({ status: true, message: "Review created successfully", data: reviewDoc })
+        return res.status(201).send({ status: true, message: "Review created successfully", data: data })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
@@ -73,14 +77,14 @@ const updateReview = async function (req, res) {
 
 
         //validation 
-        if (!validator.isValidRequestBody(requestUpdateBody)) {
-            return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide review details to update.' })
-        }
         if (!bookParams.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, msg: "Incorrect bookId format" })
         }
         if (!reviewParams.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, msg: "Incorrect reviewId format" })
+        }
+        if (!validator.isValidRequestBody(requestUpdateBody)) {
+            return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide review details to update.' })
         }
 
         //============checking review validation.
@@ -161,6 +165,9 @@ const deleteReviwsById = async function (req, res) {
         let review = await reviewModel.findById(reviewId)
         if (!review || review.isDeleted == true) {
             return res.status(404).send({ status: false, message: "Review not found" })
+        }
+        if(review.bookId != bookId) {
+            return res.status(404).send({ status: false, message: "Review not found for this book" })
         }
 
         await reviewModel.findOneAndUpdate({ _id: reviewId }, { isDeleted: true }, { new: true })

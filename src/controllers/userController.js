@@ -109,8 +109,14 @@ const loginUser = async function (req, res) {
         if (!validator.isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters,Empty body not accepted." })
         };
+        if(!email) {
+            return res.status(400).send({ status: false, message: "email is required" })
+        };
         if (!validator.isValid(email)) {
             return res.status(400).send({ status: false, message: "Email id is in wrong format" })
+        };
+        if(!password) {
+            return res.status(400).send({ status: false, message: "password is required" })
         };
         if (!validator.isValid(password)) {
             return res.status(400).send({ status: false, message: "password is in wrong format" })

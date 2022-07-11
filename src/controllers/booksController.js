@@ -113,9 +113,8 @@ const getAllBook = async function (req, res) {
             return res.status(400).send({ status: false, message: "Incorrect userId" })
         }
 
-
         const books = await booksModel.find({ ...queryParams, isDeleted: false }).sort({ title: 1 }).select('_id title excerpt userId category releasedAt reviews')
-
+        books.sort((a, b) => a.title.localeCompare(b.title))
 
         if (books && books.length == 0) {
             return res.status(404).send({ status: false, message: "Books not found" })
@@ -150,7 +149,6 @@ const getBooksById = async function (req, res) {
             rating: 1,
             review: 1
         })
-        console.log(reviews)
 
         const data = allData.toObject()  //to change mongoose document into objects (#function .toObject() in mongoose)
         data["reviewsData"] = reviews
@@ -168,7 +166,7 @@ const updateBook = async function (req, res) {
     try {
         let bookId = req.params.bookId
         if (!bookId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).send({ status: false, message: "Incorrect Blog Id format" })
+            return res.status(400).send({ status: false, message: "Incorrect Book Id format" })
         }
 
         let book = await booksModel.findById(bookId)
