@@ -85,63 +85,59 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Incorrect reviewId format" })
         }
 
-        if (review || rating || reviewedBy) {
-            //============checking review validation.
+        //============checking review validation.
+        if (review) {
             if (!validator.isValid(review)) {
                 return res.status(400).send({ status: false, message: "Review is missing ! Please provide the review details to update." })
             }
+
+        }
+
+        //============checking reviewedBy validation.
+        if (reviewedBy) {
+
+
             if (!validator.isValid(reviewedBy)) {
                 return res.status(400).send({ status: false, message: "Reviewer's name is missing ! Please provide the name to update." })
-            };
-            //============checking reviewedBy validation.
-            if (!reviewedBy) {
-                return res.status(400).send({ status: false, message: "reviewedBy is required" })
-            };
-            if (!validator.isValid(reviewedBy)) {
-                return res.status(400).send({ status: false, message: "reviewedBy is in wrong format" })
             };
             if (!reviewedBy.match(/^[ a-z ]+$/i)) {
                 return res.status(400).send({ status: false, message: "reviewedBy is in wrong format" })
             };
-            //============checking whether the rating is number or character.
-            if (!rating) {
-                return res.status(400).send({ status: false, message: "rating is required" })
-            };
+        };
+
+        //============checking whether the rating is number or character.
+        if (rating) {
+
+
             if (typeof rating != "number") {
                 return res.status(400).send({ status: false, message: "rating is in wrong format" })
             };
             if (!validator.isValidRating(rating)) {
                 return res.status(400).send({ status: false, message: "rating must be between 1 and 5" })
             };
-            //finding book and review on which we have to update.
-            const searchBook = await booksModel.findById({ _id: bookParams }).select({ createdAt: 0, updatedAt: 0, __v: 0 })
-            if (!searchBook) {
-                return res.status(404).send({ status: false, message: `Book does not exist by this ${bookParams}. ` })
-            }
-            const searchReview = await reviewModel.findById({ _id: reviewParams })
-            if (!searchReview) {
-                return res.status(404).send({
-                    status: false,
-                    message: `Review does not exist by this ${reviewParams}.`
-                })
-            }
-            //verifying the attribute isDeleted:false or not for both books and reviews documents.
-            if (searchBook.isDeleted == false) {
-                if (searchReview.isDeleted == false) {
-                    const updateReviewDetails = await reviewModel.findOneAndUpdate({ _id: reviewParams }, { review: review, rating: rating, reviewedBy: reviewedBy }, { new: true })
-                    let destructureForResponse = searchBook.toObject();
-                    destructureForResponse['reviewsData'] = updateReviewDetails;
-                    return res.status(200).send({ status: true, message: "Successfully updated the review of the book.", data: destructureForResponse })
-                } else {
-                    return res.status(400).send({ status: false, message: "Unable to update details.Review has been already deleted" })
-                }
-            } else {
-                return res.status(400).send({ status: false, message: "Unable to update details.Book has been already deleted" })
-            }
+        };
 
-
-
+        //finding book and review on which we have to update.
+        const searchBook = await booksModel.findOne({ _id: bookParams, isDeleted: false }).select({ createdAt: 0, updatedAt: 0, __v: 0 })
+        if (!searchBook) {
+            return res.status(404).send({ status: false, message: `Book does not exist by this ${bookParams}. ` })
         }
+        const searchReview = await reviewModel.findOne({ _id: reviewParams, isDeleted: false })
+        if (!searchReview) {
+            return res.status(404).send({
+                status: false,
+                message: `Review does not exist by this ${reviewParams}.`
+            })
+        }
+        if (searchReview.bookId != bookParams) {
+            return res.status(404).send({ status: false, message: "Review not found for this book" })
+        }
+
+        const updateReviewDetails = await reviewModel.findOneAndUpdate({ _id: reviewParams }, { review: review, rating: rating, reviewedBy: reviewedBy }, { new: true })
+        let destructureForResponse = searchBook.toObject();
+        destructureForResponse['reviewsData'] = updateReviewDetails;
+        return res.status(200).send({ status: true, message: "Successfully updated the review of the book.", data: destructureForResponse })
+
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
