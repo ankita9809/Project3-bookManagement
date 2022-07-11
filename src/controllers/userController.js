@@ -7,6 +7,7 @@ const secretKey = 'CACA'
 const nameRegex = /^[ a-z ]+$/i
 const mobileRegex = /^[6-9]\d{9}$/
 const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+const pincoderegex= /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/
 
 
 // ----------------------------------------------------- CREATE USER -----------------------------------------------------
@@ -88,6 +89,9 @@ const createUser = async function (req, res) {
         };
         if (address && address.pincode && !validator.isValid(address.pincode)) {
             return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
+        };
+        if (address && address.pincode && !pincoderegex.test(address.pincode)) {
+            return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
         };
 
 
