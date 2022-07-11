@@ -10,7 +10,7 @@ const createReview = async function (req, res) {
         let requestBody = req.body
         let bookId = req.params.bookId
 
-        let {reviewedBy, rating, review} = requestBody
+        let { reviewedBy, rating, review } = requestBody
         if (!validator.isValid(bookId)) {
             return res.status(400).send({ status: false, message: "bookId is in wrong format" })
         };
@@ -19,7 +19,7 @@ const createReview = async function (req, res) {
         }
 
         let book = await booksModel.findById(bookId)
-        if(!book || book.isDeleted == true){
+        if (!book || book.isDeleted == true) {
             return res.status(404).send({ status: false, message: "No book found" })
         }
         if (!validator.isValidRequestBody(requestBody)) {
@@ -56,7 +56,7 @@ const createReview = async function (req, res) {
 
         const reviewDoc = await reviewModel.create(requestBody)
 
-        let data = book.toObject();
+        let data = book.toObject();         //to change mongoose document into objects (.toObject() is a function in mongoose)
         data['reviewsData'] = reviewDoc;
 
         await booksModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: 1 } })
@@ -66,6 +66,7 @@ const createReview = async function (req, res) {
     }
 }
 
+
 // ----------------------------------------- UPDATE /books/:bookId/review/:reviewId ------------------------------------------------------
 
 const updateReview = async function (req, res) {
@@ -74,7 +75,6 @@ const updateReview = async function (req, res) {
         const reviewParams = req.params.reviewId
         const requestUpdateBody = req.body
         const { review, rating, reviewedBy } = requestUpdateBody;
-
 
         //validation 
         if (!bookParams.match(/^[0-9a-fA-F]{24}$/)) {
@@ -87,17 +87,15 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide review details to update.' })
         }
 
-        //============checking review validation.
+        // ---------------------------- checking review validation.
         if (review) {
             if (!validator.isValid(review)) {
                 return res.status(400).send({ status: false, message: "Review is missing ! Please provide the review details to update." })
             }
 
         }
-
-        //============checking reviewedBy validation.
+        // ---------------------------- checking reviewedBy validation.
         if (reviewedBy) {
-
 
             if (!validator.isValid(reviewedBy)) {
                 return res.status(400).send({ status: false, message: "Reviewer's name is missing ! Please provide the name to update." })
@@ -107,9 +105,8 @@ const updateReview = async function (req, res) {
             };
         };
 
-        //============checking whether the rating is number or character.
+        // --------------------------- checking whether the rating is number or character.
         if (rating) {
-
 
             if (typeof rating != "number") {
                 return res.status(400).send({ status: false, message: "rating is in wrong format" })
@@ -119,7 +116,7 @@ const updateReview = async function (req, res) {
             };
         };
 
-        //finding book and review on which we have to update.
+        // --------------------------- finding book and review on which we have to update.
         const searchBook = await booksModel.findOne({ _id: bookParams, isDeleted: false }).select({ createdAt: 0, updatedAt: 0, __v: 0 })
         if (!searchBook) {
             return res.status(404).send({ status: false, message: `Book does not exist by this ${bookParams}. ` })
@@ -145,6 +142,8 @@ const updateReview = async function (req, res) {
         return res.status(500).send({ status: false, message: err.message })
     }
 }
+
+
 // ---------------------------------------- DELETE /books/:bookId/review/:reviewId -------------------------------------------------------
 
 const deleteReviwsById = async function (req, res) {
@@ -158,6 +157,8 @@ const deleteReviwsById = async function (req, res) {
             return res.status(400).send({ status: false, message: "Incorrect Review Id format" })
         }
 
+        // --------------------------- finding book and review to be deleted
+
         let book = await booksModel.findById(bookId)
         if (!book || book.isDeleted == true) {
             return res.status(404).send({ status: false, message: "Book not found" })
@@ -166,7 +167,7 @@ const deleteReviwsById = async function (req, res) {
         if (!review || review.isDeleted == true) {
             return res.status(404).send({ status: false, message: "Review not found" })
         }
-        if(review.bookId != bookId) {
+        if (review.bookId != bookId) {
             return res.status(404).send({ status: false, message: "Review not found for this book" })
         }
 

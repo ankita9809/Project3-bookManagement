@@ -19,8 +19,8 @@ const createUser = async function (req, res) {
         if (!validator.isValidRequestBody(userData)) {
             return res.status(400).send({ status: false, message: "Body is empty, please Provide data" })
         };
-        
-        if(!title) {
+
+        if (!title) {
             return res.status(400).send({ status: false, message: "title is required" })
         };
         if (!validator.isValid(title)) {
@@ -30,7 +30,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Invalid title, Please select from Mr, Mrs, Miss" })
         };
 
-        if(!name) {
+        if (!name) {
             return res.status(400).send({ status: false, message: "name is required" })
         };
         if (!validator.isValid(name)) {
@@ -40,7 +40,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please Provide correct input for name" })
         };
 
-        if(!phone) {
+        if (!phone) {
             return res.status(400).send({ status: false, message: "phone is required" })
         };
         if (!validator.isValid(phone)) {
@@ -54,7 +54,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Mobile No. already exists!" });
         };
 
-        if(!email) {
+        if (!email) {
             return res.status(400).send({ status: false, message: "email is required" })
         };
         if (!validator.isValid(email)) {
@@ -68,7 +68,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Email already exists!" });
         };
 
-        if(!password) {
+        if (!password) {
             return res.status(400).send({ status: false, message: "password is required" })
         };
         if (!validator.isValid(password)) {
@@ -109,13 +109,13 @@ const loginUser = async function (req, res) {
         if (!validator.isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters,Empty body not accepted." })
         };
-        if(!email) {
+        if (!email) {
             return res.status(400).send({ status: false, message: "email is required" })
         };
         if (!validator.isValid(email)) {
             return res.status(400).send({ status: false, message: "Email id is in wrong format" })
         };
-        if(!password) {
+        if (!password) {
             return res.status(400).send({ status: false, message: "password is required" })
         };
         if (!validator.isValid(password)) {
@@ -126,7 +126,7 @@ const loginUser = async function (req, res) {
             return res.status(401).send({ status: false, message: `Invalid login credentials. Email id or password is incorrect.` });
         }
         const id = findCredentials._id
-        const token = await jwt.sign({ userId: id }, secretKey, { expiresIn: "24h" })
+        const token = await jwt.sign({ userId: id }, secretKey, { expiresIn: "24h" })    // secretKey is a variable here. Value is assigned in line 4
         return res.status(200).send({ status: true, message: `User logged in successfully.`, data: token });
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })

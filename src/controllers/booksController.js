@@ -56,7 +56,7 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
         };
         if (!ISBN.match(isbn10) && !ISBN.match(isbn13)) {
-            return res.status(400).send({ status: false, message: "ISBN is in wrong format" })
+            return res.status(400).send({ status: false, message: "Please provide correct format for ISBN" })
         };
 
         if (!category) {
@@ -114,7 +114,7 @@ const getAllBook = async function (req, res) {
         }
 
         const books = await booksModel.find({ ...queryParams, isDeleted: false }).sort({ title: 1 }).select('_id title excerpt userId category releasedAt reviews')
-        books.sort((a, b) => a.title.localeCompare(b.title))
+        books.sort((a, b) => a.title.localeCompare(b.title))  // enables case - insenstive and then sort the array
 
         if (books && books.length == 0) {
             return res.status(404).send({ status: false, message: "Books not found" })
@@ -150,7 +150,7 @@ const getBooksById = async function (req, res) {
             review: 1
         })
 
-        const data = allData.toObject()  //to change mongoose document into objects (#function .toObject() in mongoose)
+        const data = allData.toObject()  //to change mongoose document into objects (.toObject() is a function in mongoose)
         data["reviewsData"] = reviews
 
         return res.status(200).send({ status: true, message: "Books List", data: data })
@@ -191,7 +191,7 @@ const updateBook = async function (req, res) {
             }
         }
         if (excerpt && !validator.isValid(excerpt)) {
-            return res.status(400).send({ status: false, message: "excerpt is in incorrect format" })
+            return res.status(400).send({ status: false, message: "Excerpt is in incorrect format" })
         };
         if (ISBN) {
             if (!validator.isValid(ISBN)) {
@@ -207,7 +207,7 @@ const updateBook = async function (req, res) {
         }
         if (releasedAt) {
             if (!validator.isValid(releasedAt) || !validator.isValidDate(releasedAt)) {
-                return res.status(400).send({ status: false, message: "releasedAt is in incorrect format required (YYYY-MM-DD)" })
+                return res.status(400).send({ status: false, message: "releasedAt is in incorrect format..! Required (YYYY-MM-DD)" })
             };
         }
 
