@@ -20,7 +20,15 @@ router.delete("/books/:bookId", mid.auth , booksController.deleteBooksById)
 
 // ---------------------------- Review APIs ------------------------------------------
 router.post("/books/:bookId/review", reviewController.createReview)
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
 router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReviwsById)
 
+
+router.all("/**", function (req, res) {
+    res.status(404).send({
+        status: false,
+        msg: "The api you request is not available"
+    })
+})
 
 module.exports = router;
