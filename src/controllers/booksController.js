@@ -111,13 +111,7 @@ const getAllBook = async function (req, res) {
         const queryParams = req.query
         if (queryParams.userId && !queryParams.userId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, message: "Incorrect userId" })
-        }
-        //  if(queryParams.userId && Object.values(queryParams.userId).length == 0 ){
-        // //     if(!queryParams.userId || !queryParams.category || !queryParams.subcategory){
-        //        return res.status(400).send({ status: false, message: "Please Provide Values" })
-        // //     }
-        //  }
-        
+        }      
 
         const books = await booksModel.find({ ...queryParams, isDeleted: false }).sort({ title: 1 }).select('_id title excerpt userId category releasedAt reviews')
         books.sort((a, b) => a.title.localeCompare(b.title))  // enables case - insenstive and then sort the array
