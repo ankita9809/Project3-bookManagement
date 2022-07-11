@@ -3,7 +3,7 @@ const reviewModel = require("../models/reviewModel")
 const validator = require('../validator/validator')
 
 
-// -------------------------- CREATE Reviews --------------------
+// ------------------------------------------------ CREATE Reviews -----------------------------------------------------------------------
 
 const createReview = async function (req, res) {
     try {
@@ -62,9 +62,7 @@ const createReview = async function (req, res) {
     }
 }
 
-
-
-//==============================Updating an existing review.======================================
+// ----------------------------------------- UPDATE /books/:bookId/review/:reviewId ------------------------------------------------------
 
 const updateReview = async function (req, res) {
     try {
@@ -143,7 +141,7 @@ const updateReview = async function (req, res) {
         return res.status(500).send({ status: false, message: err.message })
     }
 }
-// -------------------------- DELETE /books/:bookId/review/:reviewId --------------------
+// ---------------------------------------- DELETE /books/:bookId/review/:reviewId -------------------------------------------------------
 
 const deleteReviwsById = async function (req, res) {
     try {
@@ -176,4 +174,4 @@ const deleteReviwsById = async function (req, res) {
 }
 
 
-module.exports = { createReview, deleteReviwsById, updateReview }
+module.exports = { createReview, updateReview, deleteReviwsById }

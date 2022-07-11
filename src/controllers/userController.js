@@ -3,13 +3,13 @@ const jwt = require('jsonwebtoken')
 const validator = require('../validator/validator')
 const secretKey = 'CACA'
 
-// --------------------------- REGEX -----------------------------
+// -------------------------------------------------------- REGEX ---------------------------------------------------------
 const nameRegex = /^[ a-z ]+$/i
 const mobileRegex = /^[6-9]\d{9}$/
 const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 
-// ----------------------- CREATE USER -------------------
+// ----------------------------------------------------- CREATE USER -----------------------------------------------------
 
 const createUser = async function (req, res) {
     try {
@@ -99,7 +99,7 @@ const createUser = async function (req, res) {
     }
 }
 
-// ----------------------- USER LOGIN -------------------
+// ----------------------------------------------------- USER LOGIN ------------------------------------------------------
 
 const loginUser = async function (req, res) {
     try {

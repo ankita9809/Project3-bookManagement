@@ -3,13 +3,13 @@ const booksModel = require("../models/booksModel")
 const validator = require('../validator/validator')
 
 
-// --------------------------- REGEX -----------------------------
+// --------------------------------------------------------- REGEX --------------------------------------------------------------
 
 const stringRegex = /^[ a-z ]+$/i
 const isbn10 = /^(?=(?:\D*\d){7}(?:(?:\D*\d){3})?$)[\d-]+$/
 const isbn13 = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
 
-// ------------------------------- CREATE BOOKS ----------------------------------------------------------
+// ------------------------------------------------------ CREATE BOOKS ----------------------------------------------------------
 
 const bookCreation = async function (req, res) {
     try {
@@ -102,7 +102,7 @@ const bookCreation = async function (req, res) {
     }
 }
 
-// ----------------------------GET ALL BOOKS -----------------------------------
+// ------------------------------------------------------ GET ALL BOOKS ---------------------------------------------------------
 
 const getAllBook = async function (req, res) {
 
@@ -129,7 +129,7 @@ const getAllBook = async function (req, res) {
     }
 }
 
-// ---------------------------- GET /books/:bookId -----------------
+// ----------------------------------------------------- GET /books/:bookId -----------------------------------------------------
 
 const getBooksById = async function (req, res) {
     try {
@@ -162,7 +162,7 @@ const getBooksById = async function (req, res) {
     }
 }
 
-//  ------------------------------------ PUT /books/:bookId --------------------
+//  ---------------------------------------------------- PUT /books/:bookId -----------------------------------------------------
 
 const updateBook = async function (req, res) {
     try {
@@ -221,7 +221,7 @@ const updateBook = async function (req, res) {
     }
 }
 
-// ------------------------- DELETE /books/:booksId -------------------
+// --------------------------------------------------- DELETE /books/:booksId ---------------------------------------------------
 
 const deleteBooksById = async function (req, res) {
     try {
