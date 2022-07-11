@@ -10,7 +10,7 @@ const createReview = async function (req, res) {
         let requestBody = req.body
         let bookId = req.params.bookId
 
-        let { reviewedBy, rating, review } = requestBody
+        let { reviewedBy, rating, review, isDeleted } = requestBody
         if (!validator.isValid(bookId)) {
             return res.status(400).send({ status: false, message: "bookId is in wrong format" })
         };
