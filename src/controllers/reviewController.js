@@ -130,7 +130,7 @@ const updateReview = async function (req, res) {
         }
 
         const updateReviewDetails = await reviewModel.findOneAndUpdate({ _id: reviewParams }, { review: review, rating: rating, reviewedBy: reviewedBy }, { new: true })
-                
+
         let destructureForResponse = searchBook.toObject();
         destructureForResponse['reviewsData'] = [updateReviewDetails];
         return res.status(200).send({ status: true, message: "Successfully updated the review of the book.", data: destructureForResponse })
