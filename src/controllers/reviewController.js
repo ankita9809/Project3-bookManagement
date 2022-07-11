@@ -27,7 +27,7 @@ const createReview = async function (req, res) {
         }
 
         if (!reviewedBy) {
-            return res.status(400).send({ status: false, message: "reviewedBy is required" })
+            reviewedBy = "Guest"
         };
         if (!validator.isValid(reviewedBy)) {
             return res.status(400).send({ status: false, message: "reviewedBy is in wrong format" })
@@ -79,14 +79,14 @@ const updateReview = async function (req, res) {
 
 
         //validation 
-        if (!validator.isValidRequestBody(requestUpdateBody)) {
-            return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide review details to update.' })
-        }
         if (!bookParams.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, msg: "Incorrect bookId format" })
         }
         if (!reviewParams.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({ status: false, msg: "Incorrect reviewId format" })
+        }
+        if (!validator.isValidRequestBody(requestUpdateBody)) {
+            return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide review details to update.' })
         }
 
         //============checking review validation.

@@ -115,6 +115,7 @@ const getAllBook = async function (req, res) {
 
 
         const books = await booksModel.find({ ...queryParams, isDeleted: false }).sort({ title: 1 }).select('_id title excerpt userId category releasedAt reviews')
+        books.sort((a, b) => a.title.localeCompare(b.title))
 
 
         if (books && books.length == 0) {
