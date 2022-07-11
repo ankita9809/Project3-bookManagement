@@ -55,9 +55,12 @@ const createReview = async function (req, res) {
         requestBody.bookId = bookId
 
         const reviewDoc = await reviewModel.create(requestBody)
+        let updatedBook = await booksModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: 1 } }, { new : true })
 
-        await booksModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: 1 } })
-        return res.status(201).send({ status: true, message: "Review created successfully", data: reviewDoc })
+        updatedBook = updatedBook.toObject();
+        updatedBook['reviewsData'] = [reviewDoc];
+
+        return res.status(201).send({ status: true, message: "Review created successfully", data: updatedBook })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
